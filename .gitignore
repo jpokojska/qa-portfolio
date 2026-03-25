@@ -4,6 +4,9 @@ __pycache__/
 .pytest_cache/
 .env
 
+# Virtual environment
+e2e-tests/venv/
+
 # Playwright
 test-results/
 playwright-report/
