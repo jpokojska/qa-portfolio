@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+
+# Playwright
+test-results/
+playwright-report/
+
+# Reports (generated locally, not committed)
+e2e-tests/report.html
+
+# Node (Newman)
+node_modules/
+
+# OS
+.DS_Store
