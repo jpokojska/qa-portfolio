@@ -11,39 +11,56 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
-    services:
-      restful-booker:
-        image: mwinteringham/restfulbooker-platform
-        ports:
-          - 3000:3000
-
     steps:
-      - name: Checkout repository
+      - name: Checkout qa-portfolio
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Checkout Restful-Booker Platform
+        uses: actions/checkout@v4
+        with:
+          repository: mwinteringham/restful-booker-platform
+          path: restful-booker-platform
+
+      - name: Build Restful-Booker Platform
+        working-directory: restful-booker-platform
+        run: bash build_locally.sh
+
+      - name: Start Restful-Booker Platform
+        working-directory: restful-booker-platform
+        run: bash run_locally.sh &
+
+      - name: Wait for app to be ready
+        run: |
+          echo "Waiting for Restful-Booker to start..."
+          for i in $(seq 1 30); do
+            curl -s http://localhost:3003 > /dev/null && echo "App is up!" && break
+            echo "Attempt $i — waiting 5s..."
+            sleep 5
+          done
+
+      - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
       - name: Install dependencies
         working-directory: e2e-tests
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Install Playwright browsers
         working-directory: e2e-tests
-        run: |
-          playwright install chromium --with-deps
-
-      - name: Wait for app to be ready
-        run: |
-          echo "Waiting for Restful-Booker to start..."
-          for i in $(seq 1 15); do
-            curl -s http://localhost:3000 > /dev/null && echo "App is up!" && break
-            echo "Attempt $i — waiting 3s..."
-            sleep 3
-          done
+        run: playwright install chromium --with-deps
 
       - name: Run Playwright tests
         working-directory: e2e-tests
@@ -52,8 +69,6 @@ jobs:
             --html=report.html \
             --self-contained-html \
             -v
-        env:
-          BASE_URL: http://localhost:3000
 
       - name: Upload HTML report
         if: always()
