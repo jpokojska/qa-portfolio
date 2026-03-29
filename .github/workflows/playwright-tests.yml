@@ -64,11 +64,17 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libasound2t64
+          sudo apt-get install -y \
+            libasound2t64 \
+            libgbm1 \
+            libnss3 \
+            libxss1 \
+            libatk-bridge2.0-0 \
+            libgtk-3-0
 
       - name: Install Playwright browsers
         working-directory: e2e-tests
-        run: playwright install chromium --with-deps
+        run: playwright install chromium
 
       - name: Run Playwright tests
         working-directory: e2e-tests
