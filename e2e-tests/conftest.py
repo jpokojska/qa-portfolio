@@ -52,7 +52,7 @@ def cleanup_bookings(api_token):
 
     for booking_id in created_ids:
         requests.delete(
-            f"{API_URL}/booking/{booking_id}",
+            f"{BOOKING_URL}/booking/{booking_id}",
             cookies={"token": api_token}
         )
 
