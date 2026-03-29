@@ -1,6 +1,6 @@
 # QA Portfolio — Restful-Booker Platform
 
-![Playwright Tests](https://github.com/YOUR_USERNAME/qa-portfolio/actions/workflows/playwright-tests.yml/badge.svg)
+![Playwright Tests](https://github.com/jpokojska/qa-portfolio/actions/workflows/playwright-tests.yml/badge.svg)
 ![Python](https://img.shields.io/badge/python-3.11-blue)
 ![Playwright](https://img.shields.io/badge/playwright-1.44.0-green)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
