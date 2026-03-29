@@ -61,14 +61,9 @@ jobs:
         working-directory: e2e-tests
         run: pip install -r requirements.txt
 
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libasound2t64
-
       - name: Install Playwright browsers
         working-directory: e2e-tests
-        run: playwright install chromium --with-deps
+        run: python -m playwright install --with-deps chromium
 
       - name: Run Playwright tests
         working-directory: e2e-tests
