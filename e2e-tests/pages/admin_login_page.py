@@ -9,7 +9,7 @@ class AdminLoginPage:
         self.username_input = page.locator("#username")
         self.password_input = page.locator("#password")
         self.login_button = page.locator("#doLogin")
-        self.logout_button = page.locator(".navbar-nav .nav-link", has_text="Logout")
+        self.logout_button = page.locator("button.btn-outline-danger", has_text="Logout")
 
     def goto(self):
         self.page.goto("http://localhost:3003/admin")
@@ -23,7 +23,7 @@ class AdminLoginPage:
         self.logout_button.click()
 
     def expect_logged_in(self):
-        expect(self.page).to_have_url("http://localhost:3003/admin/")
+        expect(self.page).to_have_url("http://localhost:3003/admin/rooms")
         expect(self.logout_button).to_be_visible()
 
     def expect_logged_out(self):
