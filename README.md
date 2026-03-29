@@ -132,6 +132,24 @@ Pipeline steps:
 
 ---
 
+## 🛣️ Future improvements
+
+### Tests
+- [ ] Admin dashboard tests (delete booking, manage rooms)
+- [ ] Visual regression tests (Playwright screenshots)
+
+### Code quality
+- [ ] Standardize locators — migrate all to `get_by_role()` / `get_by_label()`
+- [ ] Add Faker library for dynamic test data generation
+- [ ] Extract hardcoded URLs and credentials to `.env` file
+- [ ] Add base Page Object class with common methods
+
+### Reporting & CI
+- [ ] Allure report integration
+- [ ] Newman runner for Postman collection in CI
+
+---
+
 ## 👤 Author
 
 **Your Name**
