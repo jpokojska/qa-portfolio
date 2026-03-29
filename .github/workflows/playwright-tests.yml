@@ -9,8 +9,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright/python:v1.44.0-jammy
     timeout-minutes: 30
 
     steps:
@@ -22,6 +20,7 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+          cache: 'maven'
 
       - name: Set up Node.js 22
         uses: actions/setup-node@v4
@@ -54,9 +53,23 @@ jobs:
             sleep 5
           done
 
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
       - name: Install Python dependencies
         working-directory: e2e-tests
         run: pip install -r requirements.txt
+
+      - name: Install Playwright with dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libasound2t64
+          sudo ln -s /usr/lib/x86_64-linux-gnu/libasound.so.2 /usr/lib/x86_64-linux-gnu/libasound.so.2.0.0 || true
+          pip install playwright==1.44.0
+          python -m playwright install chromium
+          python -m playwright install-deps chromium
 
       - name: Run Playwright tests
         working-directory: e2e-tests
