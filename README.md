@@ -2,7 +2,7 @@
 
 ![Playwright Tests](https://github.com/YOUR_USERNAME/qa-portfolio/actions/workflows/playwright-tests.yml/badge.svg)
 ![Python](https://img.shields.io/badge/python-3.11-blue)
-![Playwright](https://img.shields.io/badge/playwright-latest-green)
+![Playwright](https://img.shields.io/badge/playwright-1.44.0-green)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
 A personal QA portfolio project demonstrating API and E2E test automation skills using industry-standard tools and patterns.
@@ -11,12 +11,12 @@ A personal QA portfolio project demonstrating API and E2E test automation skills
 
 ## 🧪 What's tested
 
-**Target application:** [Restful-Booker Platform](https://automationintesting.online) — a hotel booking demo app running locally via Docker.
+**Target application:** [Restful-Booker Platform](https://automationintesting.online) — a hotel booking system running locally.
 
 | Area | Tool | Tests |
 |------|------|-------|
-| REST API | Postman + Newman | ~15 requests |
-| Frontend E2E | Playwright + Python | ~8 scenarios |
+| REST API | Postman | 9 requests |
+| Frontend E2E | Playwright + Python | 4 scenarios |
 
 ---
 
@@ -24,22 +24,24 @@ A personal QA portfolio project demonstrating API and E2E test automation skills
 
 ```
 qa-portfolio/
+├── .github/
+│   └── workflows/
+│       └── playwright-tests.yml    # CI/CD pipeline
 ├── api-tests/
 │   └── postman/
 │       ├── restful-booker.postman_collection.json
 │       └── environments/
 │           └── local.postman_environment.json
 └── e2e-tests/
-    ├── pages/               # Page Object Model
-    │   ├── booking_page.py
+    ├── pages/                      # Page Object Model
     │   ├── admin_login_page.py
-    │   └── admin_dashboard_page.py
+    │   ├── home_page.py
+    │   └── reservation_page.py
     ├── tests/
-    │   ├── test_booking.py
-    │   └── test_admin.py
+    │   ├── test_admin.py
+    │   └── test_reservation.py
     ├── conftest.py
-    ├── requirements.txt
-    └── playwright.config.py
+    └── requirements.txt
 ```
 
 ---
@@ -47,83 +49,90 @@ qa-portfolio/
 ## 🚀 Running locally
 
 ### Prerequisites
-- Docker Desktop
+- Java JDK 21+
+- Maven 3.6.3+
+- Node.js 22+
 - Python 3.11+
-- Node.js (for Newman — optional, for Postman CLI runs)
 
-### 1. Start the application
+### 1. Clone and start Restful-Booker Platform
 
 ```bash
-docker run -d \
-  --name restful-booker \
-  -p 3000:3000 \
-  mwinteringham/restfulbooker-platform
+git clone https://github.com/mwinteringham/restful-booker-platform.git
+cd restful-booker-platform
+bash build_locally.sh
 ```
 
-App will be available at `http://localhost:3000`
+Application will be available at:
+- **Frontend:** `http://localhost:3003`
+- **Booking API:** `http://localhost:3000`
+- **Auth API:** `http://localhost:3004`
 
 ### 2. Run E2E tests
 
 ```bash
 cd e2e-tests
+python3.11 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 playwright install chromium
-pytest --html=report.html
+pytest tests/ -v
 ```
 
-### 3. Run API tests (Newman)
+### 3. Run API tests (Postman)
 
-```bash
-cd api-tests
-npm install -g newman newman-reporter-htmlextra
-newman run postman/restful-booker.postman_collection.json \
-  -e postman/environments/local.postman_environment.json \
-  --reporters cli,htmlextra
-```
+1. Import `api-tests/postman/restful-booker.postman_collection.json` into Postman
+2. Import `api-tests/postman/environments/local.postman_environment.json`
+3. Set **Current Value** for environment variables:
+   - `base_url`: `http://localhost:3000`
+   - `auth_url`: `http://localhost:3004`
+4. Select `local` environment and run the collection
 
 ---
 
 ## 📋 Test scenarios
 
 ### API Tests (Postman)
-- `POST /auth` — generate auth token
-- `GET /booking` — list all bookings
-- `GET /booking/{id}` — get booking by ID
-- `POST /booking` — create booking (positive + negative)
-- `PUT /booking/{id}` — update booking (auth required)
-- `DELETE /booking/{id}` — delete booking (auth required)
+
+**Auth**
+- `POST /auth/login` — valid credentials, token saved to environment
+- `POST /auth/login` — invalid credentials, returns 403
+
+**Bookings**
+- `GET /booking/` — list all bookings
+- `GET /booking/{id}` — get single booking by ID
+- `POST /booking/` — create booking, ID saved to environment
+- `PUT /booking/{id}` — update booking
+- `DELETE /booking/{id}` — delete booking
+- `POST /booking/` — missing required fields, returns 400
+- `DELETE /booking/{id}` — booking not found, returns 404
 
 ### E2E Tests (Playwright)
-- ✅ Guest can submit a booking request
-- ✅ Booking form validation — required fields
+
+**Admin**
 - ✅ Admin can log in with valid credentials
-- ❌ Admin login fails with invalid credentials
-- ✅ Admin sees booking list on dashboard
-- ✅ Admin can delete a booking
-- ✅ Room details are displayed correctly
-- ❌ Booking fails when dates are in the past
+- ✅ Admin login fails with invalid credentials
+
+**Reservation**
+- ✅ Guest can book a room — happy path
+- ✅ Booking form validation — submit without required fields
 
 ---
 
 ## 🔁 CI/CD
 
-Tests run automatically on every push via **GitHub Actions**.
-Playwright HTML report is published as a workflow artifact after each run.
+Tests run automatically on every push and pull request to `main` via **GitHub Actions**.
 
----
-
-## 🛣️ Future improvements
-
-- [ ] Visual regression tests (Playwright screenshots)
-- [ ] Performance tests (k6)
-- [ ] Data-driven tests with fixtures
-- [ ] Mobile viewport coverage
-- [ ] Full Docker Compose setup (app + test runner)
-- [ ] Allure report integration
+Pipeline steps:
+1. Checkout repository
+2. Setup Java 21, Node.js 22, Python 3.11
+3. Build and start Restful-Booker Platform
+4. Install Playwright + Chromium
+5. Run E2E tests
+6. Upload HTML report as artifact
 
 ---
 
 ## 👤 Author
 
 **Your Name**
-[LinkedIn](https://linkedin.com/in/yourprofile) · [GitHub](https://github.com/YOUR_USERNAME)
+[GitHub](https://github.com/jpokojska)
