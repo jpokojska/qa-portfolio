@@ -32,9 +32,12 @@ jobs:
           repository: mwinteringham/restful-booker-platform
           path: restful-booker-platform
 
+      - name: Set JAVA_HOME
+        run: echo "JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))" >> $GITHUB_ENV
+
       - name: Build Restful-Booker Platform
         working-directory: restful-booker-platform
-        run: bash build_locally.sh
+        run: mvn clean install -DskipTests
 
       - name: Start Restful-Booker Platform
         working-directory: restful-booker-platform
