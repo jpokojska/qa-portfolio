@@ -152,5 +152,5 @@ Pipeline steps:
 
 ## 👤 Author
 
-**Your Name**
+**Joanna Pokojska**
 [GitHub](https://github.com/jpokojska)
