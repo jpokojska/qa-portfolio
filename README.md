@@ -42,6 +42,7 @@ qa-portfolio/
     ├── .env.example                # Optional config overrides
     ├── config.py                   # URLs and credentials (env-based)
     ├── conftest.py
+    ├── pytest.ini                  # pytest-playwright options (tracing, screenshots)
     └── requirements.txt
 ```
 
@@ -80,6 +81,8 @@ pip install -r requirements.txt
 playwright install chromium
 pytest tests/ -v
 ```
+
+Tests run headless by default; add `--headed` to watch the browser. For failed tests, a Playwright trace and screenshot are saved to `e2e-tests/test-results/` (open a trace with `playwright show-trace <path>/trace.zip`).
 
 URLs and admin credentials are read from environment variables in `e2e-tests/config.py`. Defaults are the public Restful-Booker Platform demo values (`admin` / `password`), so tests run out of the box. To test against a different environment, copy `e2e-tests/.env.example` to `e2e-tests/.env` and adjust the values.
 
@@ -140,11 +143,11 @@ Tests run automatically on every push and pull request to `main` via **GitHub Ac
 Pipeline steps:
 1. Checkout repository
 2. Setup Java 26, Node.js 24, Python 3.11
-3. Build and start Restful-Booker Platform
+3. Build and start Restful-Booker Platform (pinned to a specific commit for stable CI)
 4. Install Playwright + Chromium
 5. Run API tests (Postman collection via Newman)
 6. Run E2E tests (Playwright) — runs even if API tests fail, so both results are visible
-7. Upload reports as artifact (`test-reports`: Newman JUnit XML, Playwright HTML report, trace, app log)
+7. Upload reports as artifact (`test-reports`: Newman JUnit XML, Playwright HTML report, traces and screenshots of failed tests, app log)
 
 ---
 

@@ -22,9 +22,9 @@ class ReservationPage:
         self.page.goto(f"{BASE_URL}/reservation/{room_id}?checkin={checkin}&checkout={checkout}")
 
     def open_booking_form(self):
-        self.page.wait_for_timeout(500)
+        # Wait for the page to finish loading so the button is interactive (no fixed sleep)
+        self.page.wait_for_load_state("networkidle")
         self.reserve_now_button.click()
-        
         expect(self.firstname_input).to_be_visible()
 
     def fill_booking_form(self, firstname: str, lastname: str, email: str, phone: str):

@@ -1,28 +1,14 @@
 import pytest
-import os
 import requests
-from playwright.sync_api import sync_playwright
 
 from config import ADMIN_PASSWORD, ADMIN_USERNAME, AUTH_URL, BOOKING_URL
 
-@pytest.fixture(scope="session")
-def browser():
-    headless = os.environ.get("CI", "false") == "true"
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=headless)
-        yield browser
-        browser.close()
-
+# Browser, context and tracing come from the pytest-playwright plugin
+# (see pytest.ini; run with --headed to watch the browser locally).
 @pytest.fixture(scope="function")
-def page(browser):
-    context = browser.new_context()
-    context.tracing.start(screenshots=True, snapshots=True, sources=True)
-    page = context.new_page()
+def page(page):
     page.set_default_timeout(10000)
-    yield page
-    context.tracing.stop(path="trace.zip")
-    page.close()
-    context.close()
+    return page
 
 @pytest.fixture(scope="function")
 def admin_login_page(page):
@@ -49,10 +35,19 @@ def api_token():
 
 @pytest.fixture(scope="function")
 def cleanup_bookings(api_token):
-    created_ids = []
-    yield created_ids
-    for booking_id in created_ids:
-        requests.delete(
-            f"{BOOKING_URL}/booking/{booking_id}",
-            cookies={"token": api_token}
-        )
+    """Collect guest last names; matching bookings are deleted after the test, even if it fails."""
+    guest_lastnames = []
+    yield guest_lastnames
+    if not guest_lastnames:
+        return
+    bookings = requests.get(
+        f"{BOOKING_URL}/booking/",
+        cookies={"token": api_token},
+        headers={"Accept": "application/json"}
+    ).json()["bookings"]
+    for booking in bookings:
+        if booking["lastname"] in guest_lastnames:
+            requests.delete(
+                f"{BOOKING_URL}/booking/{booking['bookingid']}",
+                cookies={"token": api_token}
+            )
