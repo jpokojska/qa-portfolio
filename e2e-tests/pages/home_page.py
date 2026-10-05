@@ -1,5 +1,7 @@
 from playwright.sync_api import Page, expect
 
+from config import BASE_URL
+
 
 class HomePage:
 
@@ -13,7 +15,7 @@ class HomePage:
         self.book_now_buttons = page.locator("a.btn-primary", has_text="Book now")
 
     def goto(self):
-        self.page.goto("http://localhost:3003")
+        self.page.goto(BASE_URL)
 
     def check_availability(self, checkin: str, checkout: str):
         self.checkin_input.fill(checkin)

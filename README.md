@@ -78,13 +78,16 @@ playwright install chromium
 pytest tests/ -v
 ```
 
+URLs and admin credentials are read from environment variables in `e2e-tests/config.py`. Defaults are the public Restful-Booker Platform demo values (`admin` / `password`), so tests run out of the box. To test against a different environment, copy `e2e-tests/.env.example` to `e2e-tests/.env` and adjust the values.
+
 ### 3. Run API tests (Postman)
 
-1. Import `api-tests/postman/restful-booker.postman_collection.json` into Postman
+1. Import `api-tests/postman/Restful-Booker-Platform.postman_collection.json` into Postman
 2. Import `api-tests/postman/environments/local.postman_environment.json`
 3. Set **Current Value** for environment variables:
    - `base_url`: `http://localhost:3000`
    - `auth_url`: `http://localhost:3004`
+   - `username` / `password` are prefilled with the public demo credentials (`admin` / `password`)
 4. Select `local` environment and run the collection
 
 ---

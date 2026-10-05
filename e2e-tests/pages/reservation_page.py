@@ -1,6 +1,8 @@
 from playwright.sync_api import Page, expect
 from datetime import datetime, timedelta
 
+from config import BASE_URL
+
 
 class ReservationPage:
 
@@ -17,7 +19,7 @@ class ReservationPage:
     def goto(self, room_id: int = 3, nights: int = 2):
         checkin = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d")
         checkout = (datetime.now() + timedelta(days=7 + nights)).strftime("%Y-%m-%d")
-        self.page.goto(f"http://localhost:3003/reservation/{room_id}?checkin={checkin}&checkout={checkout}")
+        self.page.goto(f"{BASE_URL}/reservation/{room_id}?checkin={checkin}&checkout={checkout}")
 
     def open_booking_form(self):
         self.page.wait_for_timeout(500)

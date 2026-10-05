@@ -1,5 +1,7 @@
 from playwright.sync_api import Page, expect
 
+from config import BASE_URL
+
 
 class AdminLoginPage:
 
@@ -12,7 +14,7 @@ class AdminLoginPage:
         self.logout_button = page.locator("button.btn-outline-danger", has_text="Logout")
 
     def goto(self):
-        self.page.goto("http://localhost:3003/admin")
+        self.page.goto(f"{BASE_URL}/admin")
 
     def login(self, username: str, password: str):
         self.username_input.fill(username)
@@ -23,7 +25,7 @@ class AdminLoginPage:
         self.logout_button.click()
 
     def expect_logged_in(self):
-        expect(self.page).to_have_url("http://localhost:3003/admin/rooms")
+        expect(self.page).to_have_url(f"{BASE_URL}/admin/rooms")
         expect(self.logout_button).to_be_visible()
 
     def expect_logged_out(self):
