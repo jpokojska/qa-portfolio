@@ -7,7 +7,7 @@ class AdminLoginPage:
 
     def __init__(self, page: Page):
         self.page = page
-        # Selektory
+        # Locators
         self.username_input = page.locator("#username")
         self.password_input = page.locator("#password")
         self.login_button = page.locator("#doLogin")

@@ -1,5 +1,3 @@
-import pytest
-
 from config import ADMIN_PASSWORD, ADMIN_USERNAME
 
 

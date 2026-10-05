@@ -1,4 +1,3 @@
-import pytest
 import requests
 from config import BOOKING_URL
 
@@ -14,7 +13,7 @@ def test_guest_can_book_room(reservation_page, api_token):
     reservation_page.submit_booking()
     reservation_page.expect_booking_confirmed()
 
-    # cleanup — usuń ostatnią rezerwację
+    # cleanup — delete the most recent booking
     bookings = requests.get(
         f"{BOOKING_URL}/booking/",
         cookies={"token": api_token},

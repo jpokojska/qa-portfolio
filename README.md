@@ -3,7 +3,6 @@
 ![QA Tests](https://github.com/jpokojska/qa-portfolio/actions/workflows/playwright-tests.yml/badge.svg)
 ![Python](https://img.shields.io/badge/python-3.11-blue)
 ![Playwright](https://img.shields.io/badge/playwright-1.49.1-green)
-![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
 A personal QA portfolio project demonstrating API and E2E test automation skills using industry-standard tools and patterns.
 
@@ -40,6 +39,8 @@ qa-portfolio/
     ├── tests/
     │   ├── test_admin.py
     │   └── test_reservation.py
+    ├── .env.example                # Optional config overrides
+    ├── config.py                   # URLs and credentials (env-based)
     ├── conftest.py
     └── requirements.txt
 ```
