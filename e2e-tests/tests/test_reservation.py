@@ -1,15 +1,8 @@
 import pytest
 import requests
-from conftest import AUTH_URL, BOOKING_URL
+from config import BOOKING_URL
 
-def get_token():
-    response = requests.post(
-        f"{AUTH_URL}/auth/login",
-        json={"username": "admin", "password": "password"}
-    )
-    return response.cookies.get("token")
-
-def test_guest_can_book_room(reservation_page):
+def test_guest_can_book_room(reservation_page, api_token):
     reservation_page.goto()
     reservation_page.open_booking_form()
     reservation_page.fill_booking_form(
@@ -22,16 +15,15 @@ def test_guest_can_book_room(reservation_page):
     reservation_page.expect_booking_confirmed()
 
     # cleanup — usuń ostatnią rezerwację
-    token = get_token()
     bookings = requests.get(
         f"{BOOKING_URL}/booking/",
-        cookies={"token": token},
+        cookies={"token": api_token},
         headers={"Accept": "application/json"}
     ).json()
     latest_id = bookings["bookings"][-1]["bookingid"]
     requests.delete(
         f"{BOOKING_URL}/booking/{latest_id}",
-        cookies={"token": token}
+        cookies={"token": api_token}
     )
 
 

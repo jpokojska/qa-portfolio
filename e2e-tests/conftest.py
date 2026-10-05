@@ -3,9 +3,7 @@ import os
 import requests
 from playwright.sync_api import sync_playwright
 
-BASE_URL = "http://localhost:3003"
-BOOKING_URL = "http://localhost:3000"
-AUTH_URL = "http://localhost:3004"
+from config import ADMIN_PASSWORD, ADMIN_USERNAME, AUTH_URL, BOOKING_URL
 
 @pytest.fixture(scope="session")
 def browser():
@@ -45,7 +43,7 @@ def reservation_page(page):
 def api_token():
     response = requests.post(
         f"{AUTH_URL}/auth/login",
-        json={"username": "admin", "password": "password"}
+        json={"username": ADMIN_USERNAME, "password": ADMIN_PASSWORD}
     )
     return response.cookies.get("token")
 
