@@ -7,11 +7,11 @@ class HomePage:
 
     def __init__(self, page: Page):
         self.page = page
-        # Check Availability sekcja
+        # Check Availability section
         self.checkin_input = page.get_by_label("Check In")
         self.checkout_input = page.get_by_label("Check Out")
         self.check_availability_button = page.locator("button.btn-primary.w-100")
-        # Sekcja Rooms
+        # Rooms section
         self.book_now_buttons = page.locator("a.btn-primary", has_text="Book now")
 
     def goto(self):
