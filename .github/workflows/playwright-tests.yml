@@ -41,16 +41,24 @@ jobs:
 
       - name: Start Restful-Booker Platform
         working-directory: restful-booker-platform
-        run: bash run_locally.sh &
+        run: nohup bash run_locally.sh > rbp.log 2>&1 &
 
       - name: Wait for app to be ready
         run: |
           echo "Waiting for Restful-Booker to start..."
-          for i in $(seq 1 30); do
-            curl -s http://localhost:3003 > /dev/null && echo "App is up!" && break
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:3003 > /dev/null \
+              && curl -s -o /dev/null http://localhost:3000/booking/ \
+              && curl -s -o /dev/null http://localhost:3004/auth/; then
+              echo "App is up!"
+              exit 0
+            fi
             echo "Attempt $i — waiting 5s..."
             sleep 5
           done
+          echo "App did not start in time"
+          cat restful-booker-platform/rbp.log || true
+          exit 1
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
@@ -62,24 +70,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Install Playwright with dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libasound2t64 \
-            libgbm1 \
-            libnss3 \
-            libxss1 \
-            libatk-bridge2.0-0 \
-            libgtk-3-0 \
-            libdrm2 \
-            libxkbcommon0 \
-            libxcomposite1 \
-            libxdamage1 \
-            libxfixes3 \
-            libxrandr2 \
-            libpango-1.0-0 \
-            libcairo2
-          python -m playwright install chromium
+        run: python -m playwright install --with-deps chromium
 
       - name: Run Playwright tests
         working-directory: e2e-tests
@@ -94,5 +85,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
-          path: e2e-tests/report.html
+          path: |
+            e2e-tests/report.html
+            e2e-tests/trace.zip
+            restful-booker-platform/rbp.log
           retention-days: 14
