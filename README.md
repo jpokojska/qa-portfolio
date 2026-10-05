@@ -49,17 +49,19 @@ qa-portfolio/
 ## 🚀 Running locally
 
 ### Prerequisites
-- Java JDK 21+
-- Maven 3.6.3+
-- Node.js 22+
+- Java JDK 26+
+- Maven 3.9.14+
+- Node.js 24+ (with npm 11+)
 - Python 3.11+
+
+Java, Maven and Node.js versions follow the [Restful-Booker Platform requirements](https://github.com/mwinteringham/restful-booker-platform#readme).
 
 ### 1. Clone and start Restful-Booker Platform
 
 ```bash
 git clone https://github.com/mwinteringham/restful-booker-platform.git
 cd restful-booker-platform
-bash build_locally.sh
+bash build_locally.sh      # Windows: build_locally.cmd
 ```
 
 Application will be available at:
@@ -71,8 +73,8 @@ Application will be available at:
 
 ```bash
 cd e2e-tests
-python3.11 -m venv venv
-source venv/bin/activate
+python3.11 -m venv venv     # Windows: py -3.11 -m venv venv
+source venv/bin/activate    # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 playwright install chromium
 pytest tests/ -v
@@ -136,7 +138,7 @@ Tests run automatically on every push and pull request to `main` via **GitHub Ac
 
 Pipeline steps:
 1. Checkout repository
-2. Setup Java 26, Node.js 22, Python 3.11
+2. Setup Java 26, Node.js 24, Python 3.11
 3. Build and start Restful-Booker Platform
 4. Install Playwright + Chromium
 5. Run API tests (Postman collection via Newman)
