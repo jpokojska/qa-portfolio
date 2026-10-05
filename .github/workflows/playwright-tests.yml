@@ -30,6 +30,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: mwinteringham/restful-booker-platform
+          # Pinned so upstream changes don't break CI unexpectedly.
+          # To upgrade: pick a newer commit from the trunk branch, update the SHA and check CI passes.
+          ref: d36bd3f8647a091d406e53bad463c5e3e5d2ece1
           path: restful-booker-platform
 
       - name: Build Restful-Booker Platform
@@ -97,6 +100,6 @@ jobs:
           path: |
             api-tests/newman-report.xml
             e2e-tests/report.html
-            e2e-tests/trace.zip
+            e2e-tests/test-results/
             restful-booker-platform/rbp.log
           retention-days: 14
