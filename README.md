@@ -106,8 +106,8 @@ npx newman run api-tests/postman/Restful-Booker-Platform.postman_collection.json
 ### API Tests (Postman)
 
 **Auth**
-- `POST /auth/login` — valid credentials, token saved to environment
 - `POST /auth/login` — invalid credentials, returns 403
+- `POST /auth/login` — valid credentials, token saved to environment
 
 **Bookings**
 - `GET /booking/` — list all bookings
