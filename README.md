@@ -1,8 +1,8 @@
 # QA Portfolio — Restful-Booker Platform
 
-![Playwright Tests](https://github.com/jpokojska/qa-portfolio/actions/workflows/playwright-tests.yml/badge.svg)
+![QA Tests](https://github.com/jpokojska/qa-portfolio/actions/workflows/playwright-tests.yml/badge.svg)
 ![Python](https://img.shields.io/badge/python-3.11-blue)
-![Playwright](https://img.shields.io/badge/playwright-1.44.0-green)
+![Playwright](https://img.shields.io/badge/playwright-1.49.1-green)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
 A personal QA portfolio project demonstrating API and E2E test automation skills using industry-standard tools and patterns.
@@ -15,7 +15,7 @@ A personal QA portfolio project demonstrating API and E2E test automation skills
 
 | Area | Tool | Tests |
 |------|------|-------|
-| REST API | Postman | 9 requests |
+| REST API | Postman + Newman | 9 requests |
 | Frontend E2E | Playwright + Python | 4 scenarios |
 
 ---
@@ -26,10 +26,10 @@ A personal QA portfolio project demonstrating API and E2E test automation skills
 qa-portfolio/
 ├── .github/
 │   └── workflows/
-│       └── playwright-tests.yml    # CI/CD pipeline
+│       └── playwright-tests.yml    # CI/CD pipeline (API + E2E)
 ├── api-tests/
 │   └── postman/
-│       ├── restful-booker.postman_collection.json
+│       ├── Restful-Booker-Platform.postman_collection.json
 │       └── environments/
 │           └── local.postman_environment.json
 └── e2e-tests/
@@ -90,6 +90,15 @@ URLs and admin credentials are read from environment variables in `e2e-tests/con
    - `username` / `password` are prefilled with the public demo credentials (`admin` / `password`)
 4. Select `local` environment and run the collection
 
+Or run the collection from the command line with [Newman](https://github.com/postmanlabs/newman) (requires Node.js):
+
+```bash
+npx newman run api-tests/postman/Restful-Booker-Platform.postman_collection.json \
+  -e api-tests/postman/environments/local.postman_environment.json \
+  --env-var base_url=http://localhost:3000 \
+  --env-var auth_url=http://localhost:3004
+```
+
 ---
 
 ## 📋 Test scenarios
@@ -97,8 +106,8 @@ URLs and admin credentials are read from environment variables in `e2e-tests/con
 ### API Tests (Postman)
 
 **Auth**
-- `POST /auth/login` — valid credentials, token saved to environment
 - `POST /auth/login` — invalid credentials, returns 403
+- `POST /auth/login` — valid credentials, token saved to environment
 
 **Bookings**
 - `GET /booking/` — list all bookings
@@ -127,11 +136,12 @@ Tests run automatically on every push and pull request to `main` via **GitHub Ac
 
 Pipeline steps:
 1. Checkout repository
-2. Setup Java 21, Node.js 22, Python 3.11
+2. Setup Java 26, Node.js 22, Python 3.11
 3. Build and start Restful-Booker Platform
 4. Install Playwright + Chromium
-5. Run E2E tests
-6. Upload HTML report as artifact
+5. Run API tests (Postman collection via Newman)
+6. Run E2E tests (Playwright) — runs even if API tests fail, so both results are visible
+7. Upload reports as artifact (`test-reports`: Newman JUnit XML, Playwright HTML report, trace, app log)
 
 ---
 
@@ -144,12 +154,12 @@ Pipeline steps:
 ### Code quality
 - [ ] Standardize locators — migrate all to `get_by_role()` / `get_by_label()`
 - [ ] Add Faker library for dynamic test data generation
-- [ ] Extract hardcoded URLs and credentials to `.env` file
+- [x] Extract hardcoded URLs and credentials to `.env` file
 - [ ] Add base Page Object class with common methods
 
 ### Reporting & CI
 - [ ] Allure report integration
-- [ ] Newman runner for Postman collection in CI
+- [x] Newman runner for Postman collection in CI
 
 ---
 

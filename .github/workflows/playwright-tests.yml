@@ -1,4 +1,4 @@
-name: Playwright E2E Tests
+name: QA Tests
 
 on:
   push:
@@ -72,7 +72,19 @@ jobs:
       - name: Install Playwright with dependencies
         run: python -m playwright install --with-deps chromium
 
+      - name: Run Postman API tests (Newman)
+        id: newman
+        run: |
+          npx --yes newman@6 run api-tests/postman/Restful-Booker-Platform.postman_collection.json \
+            -e api-tests/postman/environments/local.postman_environment.json \
+            --env-var base_url=http://localhost:3000 \
+            --env-var auth_url=http://localhost:3004 \
+            --reporters cli,junit \
+            --reporter-junit-export api-tests/newman-report.xml
+
+      # Run UI tests even if API tests failed, so both results are visible in one run
       - name: Run Playwright tests
+        if: ${{ !cancelled() && steps.newman.outcome != 'skipped' }}
         working-directory: e2e-tests
         run: |
           pytest tests/ \
@@ -80,12 +92,13 @@ jobs:
             --self-contained-html \
             -v
 
-      - name: Upload HTML report
+      - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: test-reports
           path: |
+            api-tests/newman-report.xml
             e2e-tests/report.html
             e2e-tests/trace.zip
             restful-booker-platform/rbp.log
